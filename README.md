@@ -6,7 +6,7 @@
 
 ## 从源码启动
 
-需要 Docker（建议可用内存 ≥ 4 GB）、Python ≥ 3.10。首次构建需要网络；运行原生工具时不使用网络。已验证架构为 Linux ARM64（macOS Docker Desktop）；其他架构尚未实测。
+需要 Docker（建议可用内存 ≥ 4 GB）、Python ≥ 3.10。首次构建需要网络；运行原生工具时不使用网络。已验证 Linux ARM64（macOS Docker Desktop）和 Linux x86_64（GitHub Actions Ubuntu 24.04）；构建、六组回归与 13 项测试均通过。
 
 ```sh
 docker build -t gongzheng-native:0.1.0 .
@@ -61,5 +61,7 @@ docker run --rm --network none --entrypoint python gongzheng-native:0.1.0 -m uni
 自有代码采用 Apache-2.0，合成示例随项目以同一许可提供。外部原生工具保留各自许可证，见 [第三方说明](THIRD_PARTY_NOTICES.md)。欢迎贡献适配器、反例和可重放测试；请阅读 [贡献规范](CONTRIBUTING.md)、[安全边界](SECURITY.md) 和 [路线图](ROADMAP.md)。
 
 ## 参赛材料
+
+在线入口：[工证 Lab 参赛材料](https://scuuy.github.io/gongzheng-lab/site/)。
 
 作品介绍、演示视频和路演材料见 [v0.1.0 发布页](https://github.com/scuuy/gongzheng-lab/releases/tag/v0.1.0)。本仓库按源码运行；当前不提供包含 Web 资源的独立 wheel 安装包。
