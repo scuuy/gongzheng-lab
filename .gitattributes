@@ -3,3 +3,6 @@
 *.msh -whitespace
 *.log -whitespace
 *.step -whitespace
+*.pdf binary
+*.pptx binary
+*.png binary
