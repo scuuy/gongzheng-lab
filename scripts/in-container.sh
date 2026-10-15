@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+cd /app
+exec python -m gongzheng.cli "$@"

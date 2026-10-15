@@ -1,0 +1,5 @@
+# Preserve native solver output byte-for-byte, including fixed-width padding.
+*.frd -whitespace
+*.msh -whitespace
+*.log -whitespace
+*.step -whitespace

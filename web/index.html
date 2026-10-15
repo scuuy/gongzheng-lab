@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>工证 Lab · 工程验收台</title><link rel="stylesheet" href="app.css"></head>
+<body>
+<header><a class="brand" href="/">工证 <span>Lab</span><i>ENGINEERING ACCEPTANCE</i></a><div class="header-right"><span class="live-dot"></span><span>原生重放验证</span><span class="version">研究原型 v0.1</span></div></header>
+<div class="shell"><aside><p class="eyebrow">工程现场</p><h2>支架变更发布</h2><p class="aside-intro">一份交付，八项工程验收。<br>逐项打开证据，再决定放行。</p><nav id="cases" aria-label="工程案例"></nav><div class="aside-foot"><strong>合成工程示例</strong><p>CadQuery / STEP<br>Gmsh / CalculiX<br>毫米 · 牛顿 · 兆帕</p><a href="/artifacts/examples/normal/requirements.json" target="_blank">查看公开验收要求 ↗</a></div></aside>
+<main><div class="page-title"><div><p class="eyebrow">交付审查 / CAD → CAE</p><h1 id="title">正常交付</h1><p id="subtitle">从参数源重建几何，独立生成网格与原生求解输入。</p></div><div class="actions"><button id="repair" class="secondary">在副本生成修复并复验</button><button id="run">启动独立验收 <span>↗</span></button></div></div>
+<div id="status" role="status" class="status">正在读取已有原生运行证据…</div>
+<div class="workspace"><section class="viewport"><div class="section-head"><h3>交付几何</h3><div class="view-controls"><button id="rotate" class="small">旋转视图</button><button id="reset" class="small">重置</button></div></div><canvas id="geometry" aria-label="原生 STEP 解码的三维几何"></canvas><div class="viewport-caption"><span id="volume">原生 STEP</span><span>拖动旋转 · 滚轮缩放</span></div><div class="coordinate">X 长度 / Y 宽度 / Z 厚度</div></section>
+<section class="decision"><p class="eyebrow">验收结论</p><div id="decision" class="decision-text">—</div><p id="decision-copy">验收完成后显示结论。</p><div id="checks-summary"></div><div class="mini-info"><p><span>验收范围</span><strong>8 项公开契约</strong></p><p><span>原生求解</span><strong>CalculiX · C3D10</strong></p><p><span>完成用时</span><strong id="duration">—</strong></p></div><p class="boundary">结论限于已配置检查与线弹性示例，不构成生产安全认证。</p></section></div>
+<section class="chain"><div class="section-head"><h3>工程工件与追溯关系</h3><span>公开要求驱动 · 可下载</span></div><div id="lineage" class="lineage"></div></section>
+<section class="model-evidence chain"><div class="section-head"><h3>模型提案接入实测</h3><span>已保存的真实运行 · 非实时推理</span></div><div id="model-demos" class="model-demos"></div><p class="model-note">模型只提交参数 JSON；可信工具重建工程，验收要求保持不变。上方修复按钮使用确定性演示配方。以下两例是产品接入验证，不用于证明任务难度。</p></section>
+<section class="evidence"><div class="section-head"><h3>检查证据</h3><span id="mode">已有运行</span></div><div class="table-head"><span>工程检查</span><span>状态</span><span>测量值与判据</span></div><div id="checks"></div></section>
+<footer>工证 Lab · AI 交付的工程验证与回归测试平台 <span>所有几何和缺陷均为自行构造的合成示例</span></footer>
+</main></div><script src="app.js"></script></body></html>

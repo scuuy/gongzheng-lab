@@ -1,0 +1,50 @@
+[
+  {
+    "case": "variant",
+    "status": "completed",
+    "model": "gpt-6-astra",
+    "identity": "网关返回标识，底层身份未独立认证",
+    "decision": "accept",
+    "passed": 8,
+    "total": 8,
+    "api_requests": 1,
+    "input_tokens": 4833,
+    "output_tokens": 317,
+    "inference_duration_s": 14.28,
+    "cost": "unknown",
+    "proposal": {
+      "schema": "gongzheng.proposal.v1",
+      "parameters": {
+        "length_mm": 72,
+        "width_mm": 24,
+        "height_mm": 10,
+        "boss_height_mm": 4
+      },
+      "rationale_zh": "失败源于hole_y_override_mm将通孔Y坐标固定为4.8 mm，导致宽度32 mm和40 mm变型不满足孔位比例要求。最小修正是删除该可选覆盖字段，恢复适配器默认关系Y=0.2×宽度；名义长度72 mm、宽度24 mm、厚度10 mm及凸台高度4 mm均保持不变，验收要求不变。重建后需独立核验宽度24、32、40 mm时孔位Y分别为4.8、6.4、8.0 mm，并复验装配Z包络15 mm、最小间隙0.5 mm，以及CAD全局坐标系下X=0夹持、X=长度端施加[0,0,-100] N载荷时最大位移不超过0.25 mm。当前证据仅支持孔位关系修正，其余要求须由重建和求解结果确认。"
+    }
+  },
+  {
+    "case": "clearance",
+    "status": "completed",
+    "model": "gpt-6-astra",
+    "identity": "网关返回标识，底层身份未独立认证",
+    "decision": "accept",
+    "passed": 8,
+    "total": 8,
+    "api_requests": 1,
+    "input_tokens": 413,
+    "output_tokens": 271,
+    "inference_duration_s": 102.29,
+    "cost": "unknown",
+    "proposal": {
+      "schema": "gongzheng.proposal.v1",
+      "parameters": {
+        "length_mm": 72,
+        "width_mm": 24,
+        "height_mm": 10,
+        "boss_height_mm": 4.5
+      },
+      "rationale_zh": "当前总高度为10+8=18 mm，相对15 mm装配包络的净空为-3 mm，与失败证据一致。为满足至少0.5 mm净空，总高度不得超过14.5 mm，因此仅将凸台高度由8 mm降至4.5 mm，这是满足该净空要求的最小高度修正；名义长度、宽度和厚度保持不变。不设置孔位常数覆盖，保留通孔Y=0.2×宽度，使24、32、40 mm宽度变体的孔位分别为4.8、6.4、8 mm。需重建STEP和网格，独立复验装配净空及各宽度变体孔位，并按CAD全局XYZ坐标、X=0夹持、X=长度端施加[0,0,-100] N载荷重新进行线弹性求解，确认最大位移不超过0.25 mm；不能由此次净空修正推定力学验收通过。"
+    }
+  }
+]

@@ -1,0 +1,23 @@
+test_equivalent_comments_are_accepted (test_acceptance.AcceptanceTests.test_equivalent_comments_are_accepted) ...
+ok
+test_material_tampering_with_recomputed_hash_is_detected (test_acceptance.AcceptanceTests.test_material_tampering_with_recomputed_hash_is_detected) ...
+ok
+test_missing_media_is_tool_error_not_engineering_rejection (test_acceptance.AcceptanceTests.test_missing_media_is_tool_error_not_engineering_rejection) ... ok
+test_model_proposal_cannot_replace_requirements (test_acceptance.AcceptanceTests.test_model_proposal_cannot_replace_requirements) ... ok
+test_model_proposal_uses_unchanged_trusted_requirements (test_acceptance.AcceptanceTests.test_model_proposal_uses_unchanged_trusted_requirements) ...
+ok
+test_public_clearance_boundary (test_acceptance.AcceptanceTests.test_public_clearance_boundary) ...
+ok
+test_recipe_repairs_five_failures_without_changing_requirements (test_acceptance.AcceptanceTests.test_recipe_repairs_five_failures_without_changing_requirements) ...
+ok
+test_six_designed_cases (test_acceptance.AcceptanceTests.test_six_designed_cases) ...
+ok
+test_step_changed_while_parameters_unchanged (test_acceptance.AcceptanceTests.test_step_changed_while_parameters_unchanged) ...
+ok
+test_arbitrary_commands_or_unknown_cases_rejected (test_server.BoundaryTests.test_arbitrary_commands_or_unknown_cases_rejected) ... ok
+test_artifact_path_traversal_denied (test_server.BoundaryTests.test_artifact_path_traversal_denied) ... ok
+test_foreign_origin_cannot_start_run (test_server.BoundaryTests.test_foreign_origin_cannot_start_run) ... ok
+test_non_object_and_unhashable_values_rejected (test_server.BoundaryTests.test_non_object_and_unhashable_values_rejected) ... ok
+----------------------------------------------------------------------
+Ran 13 tests in 80.783s
+OK

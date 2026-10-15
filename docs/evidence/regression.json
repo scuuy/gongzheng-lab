@@ -1,0 +1,66 @@
+{
+  "scope": "six designed synthetic regression fixtures, not a population estimate",
+  "rows": [
+    {
+      "id": "normal",
+      "title": "正常交付",
+      "decision": "accept",
+      "failed_checks": [],
+      "expected_outcome": true,
+      "duration_s": 1.202
+    },
+    {
+      "id": "clearance",
+      "title": "装配接口越界",
+      "decision": "reject",
+      "failed_checks": [
+        "assembly"
+      ],
+      "expected_outcome": true,
+      "duration_s": 1.18
+    },
+    {
+      "id": "variant",
+      "title": "默认正确、变型失效",
+      "decision": "reject",
+      "failed_checks": [
+        "variants"
+      ],
+      "expected_outcome": true,
+      "duration_s": 1.269
+    },
+    {
+      "id": "stale-mesh",
+      "title": "旧网格沿用",
+      "decision": "reject",
+      "failed_checks": [
+        "mesh_geometry",
+        "report"
+      ],
+      "expected_outcome": true,
+      "duration_s": 1.63
+    },
+    {
+      "id": "load-sign",
+      "title": "求解完成、载荷反向",
+      "decision": "reject",
+      "failed_checks": [
+        "load",
+        "result"
+      ],
+      "expected_outcome": true,
+      "duration_s": 1.426
+    },
+    {
+      "id": "report",
+      "title": "报告数值与重算失配",
+      "decision": "reject",
+      "failed_checks": [
+        "report"
+      ],
+      "expected_outcome": true,
+      "duration_s": 1.314
+    }
+  ],
+  "all_expected": true
+}

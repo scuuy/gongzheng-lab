@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gongzheng-lab"
+version = "0.1.0"
+description = "Replayable engineering acceptance for CAD/CAE agent deliveries"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+gongzheng = "gongzheng.cli:main"
+
+[tool.setuptools]
+packages = ["gongzheng"]

@@ -1,0 +1,47 @@
+{
+  "status": "completed",
+  "requested_model": "gpt-6-astra",
+  "returned_model": "gpt-6-astra",
+  "provider_identity": "gateway alias; underlying identity not independently attested",
+  "api_requests": 1,
+  "usage": {
+    "input_tokens": 413,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 271,
+    "claude_cache_creation_5_m_tokens": 0,
+    "claude_cache_creation_1_h_tokens": 0,
+    "billing_usage": {
+      "source": "oai_chat",
+      "semantic": "openai",
+      "openai_usage": {
+        "prompt_tokens": 413,
+        "completion_tokens": 271,
+        "total_tokens": 684,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 0,
+          "audio_tokens": 0,
+          "image_tokens": 0
+        },
+        "completion_tokens_details": {
+          "text_tokens": 0,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "reasoning_tokens": 0
+        },
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "input_tokens_details": null,
+        "claude_cache_creation_5_m_tokens": 0,
+        "claude_cache_creation_1_h_tokens": 0
+      }
+    }
+  },
+  "cost": "unknown",
+  "inference_duration_s": 102.29,
+  "scope": "two synthetic product integration demonstrations, not benchmark difficulty measurement",
+  "decision": "accept",
+  "passed": 8,
+  "total": 8
+}

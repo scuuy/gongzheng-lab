@@ -1,0 +1,32 @@
+[
+  {
+    "id": "normal",
+    "title": "正常交付",
+    "description": "自行生成的合成工程示例"
+  },
+  {
+    "id": "clearance",
+    "title": "装配接口越界",
+    "description": "自行生成的合成工程示例"
+  },
+  {
+    "id": "variant",
+    "title": "默认正确、变型失效",
+    "description": "自行生成的合成工程示例"
+  },
+  {
+    "id": "stale-mesh",
+    "title": "旧网格沿用",
+    "description": "自行生成的合成工程示例"
+  },
+  {
+    "id": "load-sign",
+    "title": "求解完成、载荷反向",
+    "description": "自行生成的合成工程示例"
+  },
+  {
+    "id": "report",
+    "title": "报告数值与重算失配",
+    "description": "自行生成的合成工程示例"
+  }
+]

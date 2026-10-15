@@ -1,0 +1,41 @@
+const $=s=>document.querySelector(s);
+let selected='normal',current=null,busy=false,rotating=false;
+const state={rx:.62,rz:.48,scale:1};
+const labels={'normal':'正常交付','clearance':'装配接口越界','variant':'默认正确、变型失效','stale-mesh':'旧网格沿用','load-sign':'求解完成、载荷反向','report':'报告数值与重算失配'};
+function esc(s){const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;}
+function num(v){return typeof v==='number'?v.toFixed(5).replace(/0+$/,'').replace(/\.$/,''):String(v);}
+function describe(c){const o=c.observed;
+ if(c.id==='source_step')return `几何对称差 ${num(o.symmetric_difference_mm3)} mm³；允许 < 0.001 mm³`;
+ if(c.id==='assembly')return `实测净空 ${num(o.clearance_mm)} mm；要求 ≥ ${c.expected.min_clearance_mm} mm`;
+ if(c.id==='variants')return o.map(v=>`宽 ${v.width_mm}：孔位 ${num(v.measured_hole_y_mm)} / 要求 ${num(v.required_hole_y_mm)} mm`).join('；');
+ if(c.id==='mesh_geometry')return `包络偏差 ${num(o.bbox_error_mm)} mm；体积偏差 ${num(o.volume_relative_error*100)}%（粗一致性检查）`;
+ if(c.id==='load')return `总载荷 [${o.total_force_N_global.map(num).join(', ')}] N；要求 [${c.expected.force_N_global.join(', ')}] N`;
+ if(c.id==='result')return `重算最大位移差 ${num(o.max_u_error_mm)} mm；源哈希 ${o.hash_lineage_matches?'一致':'不一致'}`;
+ if(c.id==='report')return `报告 ${num(o.reported_mm)} mm；独立重算 ${num(o.replayed_mm)} mm`;
+ return `独立重算 ${num(o.max_displacement_mm)} mm；上限 ${c.expected.maximum_mm} mm`;
+}
+function render(report,mode,root){current=report;$('#decision').textContent=report.decision==='accept'?'检查通过':'暂缓放行';$('#decision').className='decision-text '+report.decision;
+ const failed=report.checks.filter(c=>c.status==='fail');$('#decision-copy').textContent=failed.length?`${failed.length} 项检查未通过。请查看工件和测量依据，在副本修改后重新验收。`:`配置的 ${report.total} 项检查全部通过。工程师可依据覆盖范围确认放行。`;
+ $('#checks-summary').innerHTML=report.checks.map(c=>`<span title="${esc(c.label)}" class="segment ${c.status}"></span>`).join('');$('#duration').textContent=report.duration_s+' s';$('#mode').textContent=mode;$('#volume').textContent='STEP 实体体积 '+report.geometry.volume_mm3.toFixed(1)+' mm³';
+ $('#checks').innerHTML=report.checks.map(c=>`<div class="check" data-check="${c.id}"><strong>${esc(c.label)}</strong><span class="pill ${c.status}">${c.status==='pass'?'通过':'未通过'}</span><div><p>${esc(describe(c))}</p><span class="file-label">${c.files.map(esc).join(' · ')}</span><details><summary>展开测量与判据</summary><pre>${esc(JSON.stringify({measured:c.observed,criteria:c.expected},null,2))}</pre></details></div></div>`).join('');
+ $('#lineage').innerHTML=['parameters.json','part.step','mesh.msh','analysis.inp','result.json'].map((f,i)=>`${i?'<span class="arrow">→</span>':''}<a class="artifact" href="/artifacts/${root}/${f}" target="_blank"><b>${f}</b><span>SHA256 ${(report.lineage[f]||'').slice(0,12)}</span></a>`).join('');draw();
+}
+async function selectCase(id){if(busy)return;selected=id;$('#title').textContent=labels[id];document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.case===id));const r=await fetch('/api/saved?case='+id).then(r=>r.json());if(r.report){render(r.report,'已有原生运行记录','examples/'+id);$('#status').className='status';$('#status').textContent='当前显示已保存的原生运行证据。点击“启动独立验收”会创建新的隔离运行。';}else $('#status').textContent=r.error;}
+async function run(action){if(busy)return;busy=true;$('#run').disabled=$('#repair').disabled=true;$('#status').className='status';$('#status').textContent=action==='repair'?'在新副本按公开要求执行演示修复方案，再独立重算。':'启动隔离工具链：STEP 重开 → 参数变型 → 网格重建 → CalculiX → 证据汇总…';
+ try{const response=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({case:selected,action})});const result=await response.json();if(!response.ok)throw Error(result.error||'无法创建运行');let job;while(true){await new Promise(r=>setTimeout(r,800));job=await fetch('/api/job?id='+result.id).then(r=>r.json());if(['completed','infra_error'].includes(job.status))break;$('#status').textContent=`运行 ${result.id} · ${job.status==='queued'?'等待工具容器':'正在进行原生重放与求解'}。此过程真实执行工程计算。`;}
+ if(job.status==='infra_error')throw Error(job.error);render(job.report,'本次实际运行 · '+job.id,['repair','model-proposal'].includes(action)?`runs/${job.id}/candidate`:'examples/'+selected);$('#status').textContent=`运行 ${job.id} 已完成 · ${job.duration_s} s。${action==='repair'?'使用明确的演示修复配方，非实时 AI 推理。':action==='model-proposal'?'本次重放已保存的模型提案，未再次调用模型 API。':'结论来自本次原生计算。'}`;window.lastJob=job;
+ }catch(e){$('#status').className='status error';$('#status').textContent='工具执行未完成（不构成工程失败）：'+e.message;}finally{busy=false;$('#run').disabled=$('#repair').disabled=false;}
+}
+$('#run').onclick=()=>run('verify');$('#repair').onclick=()=>run('repair');
+const canvas=$('#geometry'),ctx=canvas.getContext('2d');
+function draw(){if(!current)return;const dpr=window.devicePixelRatio||1,w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=w*dpr;canvas.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const g=current.geometry,b=g.bbox_mm,c=[(b[0]+b[3])/2,(b[1]+b[4])/2,(b[2]+b[5])/2],scale=Math.min(w/(b[3]-b[0]+25),h/(b[4]-b[1]+40))*state.scale;
+ function project(p){const x=p[0]-c[0],y=p[1]-c[1],z=p[2]-c[2],a=x*Math.cos(state.rz)-y*Math.sin(state.rz),v=x*Math.sin(state.rz)+y*Math.cos(state.rz);return [w/2+a*scale,h/2+(v*Math.sin(state.rx)-z*Math.cos(state.rx))*scale,v*Math.cos(state.rx)+z*Math.sin(state.rx)];}
+ const pts=g.points.map(project),tris=g.triangles.map(t=>({t,z:t.reduce((s,i)=>s+pts[i][2],0)/3})).sort((a,b)=>a.z-b.z);
+ for(const {t} of tris){const p=t.map(i=>pts[i]),a=g.points[t[0]],bb=g.points[t[1]],cc=g.points[t[2]],u=bb.map((v,i)=>v-a[i]),v=cc.map((v,i)=>v-a[i]),nz=u[0]*v[1]-u[1]*v[0],len=Math.hypot(u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],nz),light=.5+.32*Math.abs(nz)/(len||1);ctx.beginPath();ctx.moveTo(p[0][0],p[0][1]);ctx.lineTo(p[1][0],p[1][1]);ctx.lineTo(p[2][0],p[2][1]);ctx.closePath();ctx.fillStyle=`rgb(${Math.round(48+light*50)},${Math.round(99+light*65)},${Math.round(115+light*70)})`;ctx.fill();ctx.strokeStyle='#45677925';ctx.lineWidth=.35;ctx.stroke();}
+ const outline=[[0,b[1],15],[b[3],b[1],15],[b[3],b[4],15],[0,b[4],15]].map(project);ctx.beginPath();outline.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.setLineDash([5,5]);ctx.strokeStyle='#ba7a3e';ctx.lineWidth=1.3;ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#9b6735';ctx.font='10px sans-serif';ctx.fillText('装配包络 Z = 15 mm',outline[0][0],outline[0][1]-8);
+}
+let drag=null;canvas.onpointerdown=e=>{drag=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};canvas.onpointermove=e=>{if(drag){state.rz+=(e.clientX-drag[0])*.008;state.rx+=(e.clientY-drag[1])*.008;drag=[e.clientX,e.clientY];draw()}};canvas.onpointerup=()=>drag=null;canvas.onwheel=e=>{e.preventDefault();state.scale=Math.max(.5,Math.min(2,state.scale*Math.exp(-e.deltaY*.001)));draw()};$('#reset').onclick=()=>{Object.assign(state,{rx:.62,rz:.48,scale:1});draw()};$('#rotate').onclick=()=>{rotating=!rotating;$('#rotate').textContent=rotating?'停止旋转':'旋转视图'};
+function animate(){if(rotating){state.rz+=.003;draw()}requestAnimationFrame(animate)}animate();window.addEventListener('resize',draw);
+fetch('/api/cases').then(r=>r.json()).then(cases=>{$('#cases').innerHTML=cases.map((c,i)=>`<button data-case="${c.id}"><span>${String(i+1).padStart(2,'0')}</span>${esc(c.title)}</button>`).join('');document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>selectCase(b.dataset.case));selectCase('normal')});
+
+fetch('/api/model-demos').then(r=>r.json()).then(rows=>{document.querySelector('#model-demos').innerHTML=rows.map(r=>`<article><span class="pill pass">实测 ${r.passed}/${r.total} 通过</span><h4>${r.case==='variant'?'恢复孔位参数关系':'修正凸台装配高度'}</h4><p>${esc(r.model)} · ${r.api_requests} 次请求 · 推理 ${r.inference_duration_s} s</p><details><summary>查看模型原始参数提案</summary><pre>${esc(JSON.stringify(r.proposal,null,2))}</pre></details><button class="small replay-model" data-model-case="${esc(r.case)}">重放此模型提案 ↗</button><small>模型身份为网关返回标识，费用 unknown</small></article>`).join('');document.querySelectorAll('[data-model-case]').forEach(b=>b.onclick=async()=>{if(busy)return;await selectCase(b.dataset.modelCase);window.scrollTo({top:0,behavior:'smooth'});await run('model-proposal')})}).catch(()=>{});

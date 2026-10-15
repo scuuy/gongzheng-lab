@@ -1,0 +1,23 @@
+{
+  "assembly": {
+    "envelope_z_mm": 15,
+    "min_clearance_mm": 0.5
+  },
+  "variants": {
+    "widths_mm": [
+      24,
+      32,
+      40
+    ],
+    "hole_y_width_ratio": 0.2
+  },
+  "analysis": {
+    "force_N_global": [
+      0,
+      0,
+      -100
+    ],
+    "frame": "CAD global XYZ; X length, Y width, Z thickness; clamp X=0, traction X=length",
+    "max_displacement_mm": 0.25
+  }
+}

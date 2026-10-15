@@ -1,0 +1,17 @@
+name: Native engineering regression
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t gongzheng-native:0.1.0 .
+      - run: scripts/docker-run.sh generate
+      - run: scripts/docker-run.sh regression
+      - run: docker run --rm --network none --entrypoint python gongzheng-native:0.1.0 -m unittest discover -s tests -v
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: engineering-replay
+          path: runs/regression
